@@ -1,0 +1,67 @@
+deloitte:
+  jira:
+    username: <username>
+    password: enc(<encrypted-password>)
+    enabled: true
+    host: https://hub.deloittedigital.com.au
+    project: 
+      code: TO  # This is the Deloitte jira instance project code
+      id: 26056
+    zapi:
+      path:
+        cycle: 
+          post: /jira/rest/zapi/latest/cycle
+          search: /jira/rest/zapi/latest/cycle
+        attachment:
+          post: /jira/rest/zapi/latest/attachment
+        execution: 
+          post: /jira/rest/zapi/latest/execution
+          get: /jira/rest/zapi/latest/execution/:id
+          search: /rest/zapi/latest/execution
+          put: /jira/rest/zapi/latest/execution/:id/execute
+        folder:
+          post: /jira/rest/zapi/latest/folder/create
+          get: /jira/rest/zapi/latest/cycle/:id/folders
+    path:
+      issue: 
+        get: /jira/rest/api/2/issue/:id
+    DOES_NOT_EXIST: -1
+    ZEPHYR_WIP_STATUS: 3
+    ZEPHYR_SUCCESS_STATUS: 1
+    ZEPHYR_FAIL_STATUS: 2
+    ZEPHYR_SKIPPED_STATUS: 4
+    ANSI_ENCODING: /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g
+
+local:
+  jira:
+    username: <username>
+    password: enc(<encrypted-password>)
+    enabled: true
+    host: http://localhost:8080
+    project:       
+      code: AUTO 
+      id: 10000   # This is the local jira project ID
+    zapi:
+      path:
+        cycle: 
+          post: /rest/zapi/latest/cycle
+          search: /rest/zapi/latest/cycle
+        attachment:
+          post: /rest/zapi/latest/attachment
+        execution: 
+          post: /rest/zapi/latest/execution
+          get: /rest/zapi/latest/execution/:id
+          search: /rest/zapi/latest/execution
+          put: /rest/zapi/latest/execution/:id/execute
+        folder:
+          post: /rest/zapi/latest/folder/create
+          get: /rest/zapi/latest/cycle/:id/folders
+    path:
+      issue: 
+        get: /rest/api/latest/issue/:id
+    DOES_NOT_EXIST: -1
+    ZEPHYR_WIP_STATUS: 3
+    ZEPHYR_SUCCESS_STATUS: 1
+    ZEPHYR_FAIL_STATUS: 2
+    ZEPHYR_SKIPPED_STATUS: 4
+    ANSI_ENCODING: /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g

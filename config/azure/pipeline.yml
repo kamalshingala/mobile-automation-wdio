@@ -1,0 +1,121 @@
+parameters:
+  - name: TESTENV
+    displayName: Environment
+    type: string
+    default: 'SIT'
+    values:
+      - DEV
+      - TST
+      - SIT
+      - UAT
+  - name: os
+    displayName: OSType
+    type: string
+    default: 'ANDROID'
+    values:
+      - ANDROID
+      - IOS
+  - name: devicetype
+    displayName: DeviceType
+    type: string
+    default: 'REAL'
+    values:
+      - REAL
+      - VIRTUAL
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+    - releases/*
+    - features/*
+    - fix/*
+
+schedules:
+- cron: "0 8 * * 1-5"
+  displayName: Daily Morning build
+  branches:
+    include:
+    - master
+
+#https://docs.microsoft.com/en-us/azure/devops/pipelines/process/pipeline-triggers?view=azure-devops&tabs=yaml
+#https://docs.microsoft.com/en-us/azure/devops/pipelines/process/resources?view=azure-devops&tabs=example#resources-pipelines
+resources:
+  pipelines:
+  - pipeline: securitylib   # Name of the pipeline resource
+    project: string # project for the source; optional for current project
+    source: security-lib-ci # Name of the pipeline referenced by the pipeline resource
+    trigger: 
+      branches:
+      - develop
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '12.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+  displayName: 'npm install'
+
+#if: build.source == "schedule" && build.branch == "master", run android and ios tests in SIT
+- bash: |
+    ./runtest.sh
+    echo "##vso[task.setvariable variable=SCRIPTNAME]$SCRIPTNAME"
+  name: Name
+  displayName: 'Running Automation Tests - SIT Env - Android'
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'), eq(variables['Build.Reason'], 'Schedule'))
+  env:
+    TESTENV: SIT
+    os: ANDROID
+    devicetype: VIRTUAL
+#- task: ShellScript@2
+  #inputs:
+    #scriptPath: ./runtest.sh 
+   # args: ${{parameters.env}}
+    #failOnStandardError: false
+
+- script: |
+    npm run ${Name.SCRIPTNAME}
+  displayName: 'npm run'
+
+- bash: |
+   ./runtest.sh
+   echo "##vso[task.setvariable variable=SCRIPTNAME]$SCRIPTNAME"
+  name: Name
+  displayName: 'Running Automation Tests - SIT Env - iOS'
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'), eq(variables['Build.Reason'], 'Schedule'))
+  env:
+    TESTENV: SIT
+    os: IOS
+    devicetype: REAL
+#- task: ShellScript@2
+  #inputs:
+    #scriptPath: ./runtest.sh 
+   # args: ${{parameters.env}}
+    #failOnStandardError: false
+
+- script: |
+    npm run ${Name.SCRIPTNAME}
+  displayName: 'npm run'
+
+# if: build.source != "schedule", run tests based on env and os defined
+- bash: |
+   ./runtest.sh
+   echo "##vso[task.setvariable variable=SCRIPTNAME]$SCRIPTNAME"
+  name: Name
+  displayName: 'Running Automation Tests - ${{parameters.TESTENV}} Env - ${{parameters.os}}'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'Schedule'))
+  env:
+    TESTENV: ${{parameters.TESTENV}}
+    os: ${{parameters.os}}
+    devicetype: ${{parameters.devicetype}}
+
+- script: |
+    TESTENV=${{parameters.TESTENV}} npm run ${Name.SCRIPTNAME} 
+  displayName: 'npm run'

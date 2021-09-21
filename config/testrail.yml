@@ -1,0 +1,23 @@
+host: deloittealm.testrail.io
+url: https://${host}/index.php
+projectName: sampleProjectName
+
+# This flag for publishing result into TestRail
+publishResult: false
+
+# TestRail ProjectId - This is information from Test Rail
+testRailProjectId: 20
+
+# This is a predefined Run Id for updating an existing Run ID
+predifinedRunId: 530
+
+# Predefined section from test rail where test cases are belonged to
+predefinedSectionId: 2572
+
+# Test Rail Result Constants
+testRailResultPassed: 1
+testRailResultFailed: 5
+testRailDefaultComment: This is default comment for TestRail
+baseUrl: sample${envId}Url.com
+appName: mobile-automation
+appVersion: v1.0.0

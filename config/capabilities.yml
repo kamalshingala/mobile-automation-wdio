@@ -1,0 +1,13 @@
+android:
+  platformName: 'Android'
+  deviceName: 'emulator-5554'
+  platformVersion: '8.1.0'
+  orientation: 'PORTRAIT'
+  installerFile: './apps/Android.apk.zip'
+
+ios:
+  platformName: 'iOS'
+  deviceName: 'iPhone 11 Pro Max'
+  platformVersion: '14.1'
+  orientation: 'PORTRAIT'
+  installerFile: ./apps/iOSSim.zip'
